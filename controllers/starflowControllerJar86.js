@@ -23,7 +23,54 @@ exports.getHealtWellness = function (req, res) {
   res.send(JSON.stringify(healthWellness));
 };
 
+//POST REQUESTS (add functions)
+exports.addIncidentReport = function (req, res) {
+  console.log("Received post request to add an incident report");
+  let newIncident = {
+    incident_date: req.body.incident_date,
+    incident_time: req.body.incident_time,
+    type_incident: req.body.type_incident,
+    staff_name: req.body.staff_name,
+    VPD_called: req.body.VPD_called,
+    room_number: req.body.room_number,
+    comments: req.body.comments,
+  };
+  console.log(newIncident);
+  incidentReport.push(newIncident);
+  res.header("Content-Type: application/json");
+  res.send(JSON.stringify(incidentReport));
+};
 
+exports.addTodo = function (req, res) {
+  console.log("Received post request to add a todo");
+  let newTodo = {
+    expiration_date: req.body.expiration_date,
+    room_number: req.body.room_number,
+    priority: req.body.priority,
+    comments: req.body.comments,
+  };
+  console.log(newTodo);
+  todoList.push(newTodo);
+  res.header("Content-Type: application/json");
+  res.send(JSON.stringify(todoList));
+};
+
+exports.addHealth = function (req, res) {
+  console.log("Received post request to check a tenant");
+  let newHealth = {
+    room_number: req.body.room_number,
+    tenant_name: req.body.tenant_name,
+    date: req.body.date,
+    time: req.body.time,
+    morning_check: req.body.morning_check,
+    afternoon_check: req.body.afternoon_check,
+    night_check: req.body.night_check,
+  };
+  console.log(newHealth)
+  healthWellness.push(newHealth)
+  res.header("Content-Type: application/json");
+  res.send(JSON.stringify(healthWellness))
+};
 
 let incidentReport = [
   {
