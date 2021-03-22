@@ -4,6 +4,51 @@ exports.getTenantListJar86 = function (req, res) {
     res.send(JSON.stringify(tenants));
   };
 
+  exports.getIncidentReport = function (req, res) {
+    console.log("Received get request to get incident list");
+    res.header("Content-Type: application/json");
+    res.send(JSON.stringify(incidentReport));
+  };
+
+  exports.getTodoList = function (req, res) {
+    console.log("Received get request to get todo list");
+    res.header("Content-Type: application/json");
+    res.send(JSON.stringify(todoList));
+  };
+
+  exports.getHealtWellness = function (req, res) {
+    console.log("Received get request to get healt and wellness list");
+    res.header("Content-Type: application/json");
+    res.send(JSON.stringify(healthWellness));
+  };
+
+  let incidentReport = [{
+      incident_date: '',
+      incident_time: '',
+      type_incident: '',
+      staff_name: '',
+      VPD_called: '',
+      room_number: '',
+      comments: ''
+  }]
+
+  let todoList = [{
+      expiration_date: '',
+      room_number: '',
+      priority: '',
+      comments: ''
+  }]
+
+  let healthWellness = [{
+      room_number: '',
+      tenant_name: '',
+      date: '',
+      time: '',
+      morning_check: '',
+      afternoon_check: '',
+      night_check: ''
+  }]
+
   let tenants = [{
     "id": 1,
     "first_name": "Adele",
