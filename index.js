@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 const starFlow = require('./routes/starflowRouteJar86.js')
 
-app.use('/tenantList', starFlow)
+app.use('/tenants', starFlow)
 app.use('/', starFlow)
 
 app.listen(port, () => {

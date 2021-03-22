@@ -3,7 +3,7 @@ var router = express.Router()
 
 var starFlowController = require('../controllers/starflowControllerJar86.js')
 
-router.get('/', starFlowController.getTenantListJar86)
+router.get('/tenants', starFlowController.getTenantListJar86)
 // router.get('/totals', shoppingController.getTotals)
 // router.post('/', shoppingController.addItemJar86)
 // router.delete('/', shoppingController.removeItemJar86)
