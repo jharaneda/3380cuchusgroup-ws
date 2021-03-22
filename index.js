@@ -12,7 +12,7 @@ const corsOption = {
 app.use(cors());
 app.use(bodyParser.json());
 
-const starFlow = require('./routes/shoppingRouteJar86.js')
+const starFlow = require('./routes/starflowRouteJar86.js')
 
 app.use('/tenantList', starFlow)
 app.use('/', starFlow)
