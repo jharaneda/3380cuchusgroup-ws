@@ -32,7 +32,7 @@ exports.addIncidentReport = function (req, res) {
     type_incident: req.body.type_incident,
     staff_name: req.body.staff_name,
     VPD_called: req.body.VPD_called,
-    room_number: req.body.room_number,
+    room: req.body.room,
     comments: req.body.comments,
   };
   console.log(newIncident);
@@ -79,7 +79,7 @@ let incidentReport = [
     type_incident: "",
     staff_name: "",
     VPD_called: "",
-    room_number: "",
+    room: "",
     comments: "",
   },
 ];
