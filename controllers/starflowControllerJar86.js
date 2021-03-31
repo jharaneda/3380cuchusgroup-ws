@@ -1,4 +1,4 @@
-//GET REQUESTS
+//************GET REQUESTS************
 exports.getTenantListJar86 = function (req, res) {
   console.log("Received get request to get profile list");
   res.header("Content-Type: application/json");
@@ -23,7 +23,7 @@ exports.getHealtWellness = function (req, res) {
   res.send(JSON.stringify(healthWellness));
 };
 
-//POST REQUESTS (add functions)
+//************POST REQUESTS (add functions)************
 exports.addIncidentReport = function (req, res) {
   console.log("Received post request to add an incident report");
   let newIncident = {
@@ -66,10 +66,29 @@ exports.addHealth = function (req, res) {
     afternoon_check: req.body.afternoon_check,
     night_check: req.body.night_check,
   };
-  console.log(newHealth)
-  healthWellness.push(newHealth)
+  console.log(newHealth);
+  healthWellness.push(newHealth);
   res.header("Content-Type: application/json");
-  res.send(JSON.stringify(healthWellness))
+  res.send(JSON.stringify(healthWellness));
+};
+
+//************POST REQUEST UPDATE************
+exports.updateProfile = function (req, res) {
+  console.log("Received update profile");
+  let tenantRoom = req.body.room;
+
+  const tenantIndex = tenants.map((index) => index.room).indexOf(tenantRoom);
+  (tenants[tenantIndex].first_name = req.body.first_name),
+    (tenants[tenantIndex].last_name = req.body.last_name),
+    (tenants[tenantIndex].room = req.body.room),
+    (tenants[tenantIndex].floor = req.body.floor),
+    (tenants[tenantIndex].phone = req.body.phone),
+    (tenants[tenantIndex].meds_taken = req.body.meds_taken),
+    (tenants[tenantIndex].comments = req.body.comments),
+    (tenants[tenantIndex].phsycal_description = req.body.phsycal_description),
+    (tenants[tenantIndex].birthdate = req.body.birthdate),
+    res.header("Content-Type: application/json");
+  res.send(JSON.stringify(tenants));
 };
 
 let incidentReport = [
