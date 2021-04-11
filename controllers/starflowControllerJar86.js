@@ -1,14 +1,64 @@
+const Tenant = require("../models/tenant");
 //************GET REQUESTS************
-exports.getTenantListJar86 = function (req, res) {
+// SIN MONGO exports.getTenantListJar86 = function (req, res) {
+//   console.log("Received get request to get profile list");
+//   res.header("Content-Type: application/json");
+//   res.send(JSON.stringify(tenants));
+// };
+//LIST
+exports.getTenantListJar86 = async (req, res) => {
   console.log("Received get request to get profile list");
-  res.header("Content-Type: application/json");
-  res.send(JSON.stringify(tenants));
+  const allTenants = await Tenant.find();
+  try {
+    res.status(200);
+    res.send(allTenants);
+
+    res.status(404);
+    res.send({ message: "No tenants found!" });
+  } catch {
+    res.status(500);
+    // res.send({ message: "Ups! Nothing here" });
+  }
 };
 
-exports.getIncidentReport = function (req, res) {
+// SIN MONGO exports.getIncidentReport = function (req, res) {
+//   console.log("Received get request to get incident list");
+//   res.header("Content-Type: application/json");
+//   res.send(JSON.stringify(incidentReport));
+// };
+//LISTO
+exports.getIncidentReport = async (req, res) => {
   console.log("Received get request to get incident list");
-  res.header("Content-Type: application/json");
-  res.send(JSON.stringify(incidentReport));
+
+  const incidentes = await Tenant.find(
+    { incidentes: { $not: { $size: 0 } } },
+    { incidentes: 1, _id: 0 }
+  );
+  var incidentsModified = [];
+  for (var i = 0; i < incidentes.length; i++) {
+    for (var h = 0; h < incidentes[i].incidentes.length; h++) {
+      incidentsModified.push({
+        VPD_called: incidentes[i].incidentes[h].VPD_called,
+        incident_date: incidentes[i].incidentes[h].incident_date,
+        incident_time: incidentes[i].incidentes[h].incident_time,
+        type_incident: incidentes[i].incidentes[h].type_incident,
+        staff_name: incidentes[i].incidentes[h].staff_name,
+        room: incidentes[i].incidentes[h].room,
+        comments: incidentes[i].incidentes[h].comments,
+      });
+    }
+  }
+  // console.log(incidentsModified);
+  try {
+    res.status(200);
+    res.send(incidentsModified);
+
+    res.status(404);
+    res.send({ message: "No incidents found!" });
+  } catch {
+    res.status(500);
+    // res.send({ message: "Ups! Nothing here" });
+  }
 };
 
 exports.getTodoList = function (req, res) {
@@ -17,28 +67,87 @@ exports.getTodoList = function (req, res) {
   res.send(JSON.stringify(todoList));
 };
 
-exports.getHealtWellness = function (req, res) {
+exports.getHealtWellness = async (req, res)=>{
   console.log("Received get request to get healt and wellness list");
+  var date = new Date();
+  if (date.getMonth() < 10)
+    var formatDate = `${date.getFullYear()}-0${
+      date.getMonth() + 1
+    }-${date.getDate()}`;
+  else
+    var formatDate = `${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()}`;
+  date = formatDate;
+
+  //insert a new object into healthCheck to initialize the day with its checks, so I can use it as state
+  var populateDay = await Tenant.updateMany(
+    {"healthChecks.date": { $ne: date } }, {$push: { healthChecks: {
+      // {"healthChecks.date": date }, {$set: { healthChecks: { *****este para volver a 0
+      date: date,
+      night: "Not seen",
+      morning: "Not seen",
+      evening: "Not seen"
+    }}}
+  );
+
+  // { incidentes: { $not: { $size: 0 } } },
+  //   { incidentes: 1, _id: 0 }
+  var healthList = await Tenant.find({"healthChecks.date": date }, {_id: 1, first_name: 1, last_name: 1, birthdate:1, healthChecks: 1, room: 1 })
+  console.log(healthList)
   res.header("Content-Type: application/json");
-  res.send(JSON.stringify(healthWellness));
+  res.send(JSON.stringify(healthList));
 };
 
 //************POST REQUESTS (add functions)************
-exports.addIncidentReport = function (req, res) {
+// exports.addIncidentReport = function (req, res) {
+//   console.log("Received post request to add an incident report");
+
+//   let newIncident = {
+//     incident_date: req.body.incident_date,
+//     incident_time: req.body.incident_time,
+//     type_incident: req.body.type_incident,
+//     staff_name: req.body.staff_name,
+//     VPD_called: req.body.VPD_called,
+//     room: req.body.room,
+//     comments: req.body.comments,
+//   };
+//   console.log(newIncident);
+//   incidentReport.push(newIncident);
+//   res.header("Content-Type: application/json");
+//   res.send(JSON.stringify(incidentReport));
+// };
+//LISTO
+exports.addIncidentReport = async (req, res) => {
   console.log("Received post request to add an incident report");
-  let newIncident = {
-    incident_date: req.body.incident_date,
-    incident_time: req.body.incident_time,
-    type_incident: req.body.type_incident,
-    staff_name: req.body.staff_name,
-    VPD_called: req.body.VPD_called,
-    room: req.body.room,
-    comments: req.body.comments,
-  };
-  console.log(newIncident);
-  incidentReport.push(newIncident);
-  res.header("Content-Type: application/json");
-  res.send(JSON.stringify(incidentReport));
+
+  const incident = await Tenant.updateOne(
+    { room: req.body.room },
+    {
+      $push: {
+        incidentes: {
+          incident_date: req.body.incident_date,
+          incident_time: req.body.incident_time,
+          type_incident: req.body.type_incident,
+          staff_name: req.body.staff_name,
+          VPD_called: req.body.VPD_called,
+          room: req.body.room,
+          comments: req.body.comments,
+        },
+      },
+    }
+  );
+  const allTenants = await Tenant.find();
+  try {
+    res.status(200);
+    res.send(allTenants);
+
+    res.status(404);
+    res.send({ message: "No tenants found!" });
+  } catch {
+    res.status(500);
+    res.send({ message: "Ups! Nothing here" });
+  }
 };
 
 exports.addTodo = function (req, res) {
@@ -55,40 +164,174 @@ exports.addTodo = function (req, res) {
   res.send(JSON.stringify(todoList));
 };
 
-exports.addHealth = function (req, res) {
-  console.log("Received post request to check a tenant");
-  let newHealth = {
-    room_number: req.body.room_number,
-    tenant_name: req.body.tenant_name,
-    date: req.body.date,
-    time: req.body.time,
-    morning_check: req.body.morning_check,
-    afternoon_check: req.body.afternoon_check,
-    night_check: req.body.night_check,
-  };
-  console.log(newHealth);
-  healthWellness.push(newHealth);
-  res.header("Content-Type: application/json");
-  res.send(JSON.stringify(healthWellness));
+//************POST REQUEST UPDATE************
+// SIN MONGO exports.updateProfile = function (req, res) {
+//   console.log("Received update profile");
+//   let tenantRoom = req.body.room;
+
+//   const tenantIndex = tenants.map((index) => index.room).indexOf(tenantRoom);
+//   (tenants[tenantIndex].first_name = req.body.first_name),
+//     (tenants[tenantIndex].last_name = req.body.last_name),
+//     (tenants[tenantIndex].room = req.body.room),
+//     (tenants[tenantIndex].floor = req.body.floor),
+//     (tenants[tenantIndex].phone = req.body.phone),
+//     (tenants[tenantIndex].meds_taken = req.body.meds_taken),
+//     (tenants[tenantIndex].comments = req.body.comments),
+//     (tenants[tenantIndex].phsycal_description = req.body.phsycal_description),
+//     (tenants[tenantIndex].birthdate = req.body.birthdate),
+//     res.header("Content-Type: application/json");
+//   res.send(JSON.stringify(tenants));
+// };
+//LISTO
+exports.updateProfile = async (req, res) => {
+  console.log("Received update profile");
+  const oneTenant = await Tenant.updateOne(
+    { _id: req.body._id },
+    {
+      $set: {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        room: req.body.room,
+        floor: req.body.floor,
+        phone: req.body.phone,
+        meds_taken: req.body.meds_taken,
+        comments: req.body.comments,
+        physical_description: req.body.physical_description,
+        birthdate: req.body.birthdate,
+      },
+    }
+  );
+  const allTenants = await Tenant.find();
+  try {
+    res.status(200);
+    res.send(allTenants);
+
+    res.status(404);
+    res.send({ message: "No tenants found!" });
+  } catch {
+    res.status(500);
+    res.send({ message: "Ups! Nothing here" });
+  }
 };
 
-//************POST REQUEST UPDATE************
-exports.updateProfile = function (req, res) {
-  console.log("Received update profile");
-  let tenantRoom = req.body.room;
+//ESTE AGREGARA LOS CHECK
+exports.addHealth = async (req, res) => {
+  console.log("Received post request to check a tenant");
 
-  const tenantIndex = tenants.map((index) => index.room).indexOf(tenantRoom);
-  (tenants[tenantIndex].first_name = req.body.first_name),
-    (tenants[tenantIndex].last_name = req.body.last_name),
-    (tenants[tenantIndex].room = req.body.room),
-    (tenants[tenantIndex].floor = req.body.floor),
-    (tenants[tenantIndex].phone = req.body.phone),
-    (tenants[tenantIndex].meds_taken = req.body.meds_taken),
-    (tenants[tenantIndex].comments = req.body.comments),
-    (tenants[tenantIndex].phsycal_description = req.body.phsycal_description),
-    (tenants[tenantIndex].birthdate = req.body.birthdate),
-    res.header("Content-Type: application/json");
-  res.send(JSON.stringify(tenants));
+  var date = req.body.date;
+  var id1 = req.body._id;
+  var night, morning, evening;
+  console.log("night:" + req.body.night);
+  console.log("morning:" + req.body.morning);
+  console.log("evening:" + req.body.evening);
+  if (req.body.night != null) {
+    var night = req.body.night;
+  } else {
+    var night = "";
+  }
+
+  if (req.body.morning != null) {
+    var morning = req.body.morning;
+  } else {
+    var morning = "";
+  }
+
+  if (req.body.evening != null) {
+    var evening = req.body.evening;
+  } else {
+    var evening = "";
+  }
+  console.log("night:" + night + " morning:" + morning + " evening:" + evening);
+
+  //busco si el registro existe
+  var check1 = await Tenant.find(
+    { _id: id1, "healthChecks.date": { $eq: date } },
+    { healthChecks: 1 }
+  );
+  var checkExists = false;
+  
+  var nightDB, morningDB, eveningDB, dateDB;
+  if (check1.length > 0) {
+    for (var i = 0; i < check1.length; i++) {
+      for (var h = 0; h < check1[i].healthChecks.length; h++) {
+        console.log("ADENTRO");
+        if (check1[i].healthChecks[h].date == date) {
+          (dateDB = check1[i].healthChecks[h].date),
+            (nightDB = check1[i].healthChecks[h].night),
+            (morningDB = check1[i].healthChecks[h].morning),
+            (eveningDB = check1[i].healthChecks[h].evening),
+            (checkExists = true);
+        }
+      }
+    }
+  }
+  
+  var nightToUpdate;
+  var morningToUpdate;
+  var eveningToUpdate;
+
+  if (checkExists == true) {
+    console.log("true was called");
+    if (night == "") {
+      console.log("adentro if night");
+      nightToUpdate = nightDB;
+    } else {
+      console.log("adentro else night");
+      nightToUpdate = night;
+    }
+    if (morning == "") {
+      console.log("adentro if morning");
+      morningToUpdate = morningDB;
+    } else {
+      console.log("adentro else morning");
+      morningToUpdate = morning;
+    }
+    if (evening == "") {
+      console.log("adentro if evening");
+      eveningToUpdate = eveningDB;
+    } else {
+      console.log("adentro else morning");
+      eveningToUpdate = evening;
+    }
+    var check = await Tenant.updateOne(
+      { _id: id1, "healthChecks.date": { $eq: date } },
+      {
+        $set: {
+          healthChecks: {
+            date: date,
+            night: nightToUpdate,
+            morning: morningToUpdate,
+            evening: eveningToUpdate,
+          },
+        },
+      }
+    );
+  } else {
+    var check = await Tenant.updateOne(
+      { _id: id1 },
+      {
+        $push: {
+          healthChecks: {
+            date: date,
+            night: night,
+            morning: morning,
+            evening: evening,
+          },
+        },
+      }
+    );
+  }
+  const allTenants = await Tenant.find();
+  try {
+    res.status(200);
+    res.send(allTenants);
+
+    res.status(404);
+    res.send({ message: "No tenants found!" });
+  } catch {
+    res.status(500);
+    // res.send({ message: "Ups! Nothing here" });
+  }
 };
 
 let incidentReport = [
