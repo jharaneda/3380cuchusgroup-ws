@@ -12,6 +12,7 @@ router.post('/todolist', starFlowController.addTodo)
 
 router.get('/health', starFlowController.getHealtWellness)
 router.post('/health', starFlowController.addHealth)
+router.get('/health/report', starFlowController.getHealthReport)
 
 router.get('/incident', starFlowController.getIncidentReport)
 router.post('/incident', starFlowController.addIncidentReport)

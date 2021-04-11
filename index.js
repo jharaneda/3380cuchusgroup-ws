@@ -21,6 +21,7 @@ app.use('/tenants', starFlow)
 app.use('/incident', starFlow)
 app.use('/todoList', starFlow)
 app.use('/health', starFlow)
+app.use('/health/report', starFlow)
 app.use('/', starFlow)
 
 app.listen(port, () => {
