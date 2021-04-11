@@ -37,6 +37,7 @@ exports.getHealthReport = async (req, res) => {
   for (var i = 0; i < healthFilter.length; i++) {
     var id = healthFilter[i]._id;
       var names;
+      var room;
       var birthdate;
       var night;
       var morning;
@@ -44,6 +45,7 @@ exports.getHealthReport = async (req, res) => {
       var seenCount = 0;
     for (var h = 0; h < healthFilter[i].healthChecks.length; h++) {
       id = healthFilter[i]._id;
+      room = healthFilter[i].room;
       names = healthFilter[i].first_name + " " + healthFilter[i].last_name;
       birthdate = healthFilter[i].birthdate
       night = healthFilter[i].healthChecks[h].night;
@@ -55,7 +57,7 @@ exports.getHealthReport = async (req, res) => {
         // console.log(names + " seencount: " + seenCount);
       }
     }
-    healthReportList.push({_id: id, names: names, birthdate: birthdate, seenCount: seenCount})
+    healthReportList.push({_id: id, names: names, birthdate: birthdate, seenCount: seenCount, room: room})
     // console.log("healthReportList")
     //   console.log(healthReportList)
   }
