@@ -23,17 +23,15 @@ exports.getHealthReport = async (req, res) => {
   console.log(today)
   console.log(dateMinusOne)
   console.log(dateMinusTwo)
-  //get all the incidents where incidentes[] is not empty
+  //get all the incidents where the date is less than today is not empty
   var healthFilter = await Tenant.find(
     // { _id: id, "healthChecks.date": { $eq: date } },
     {"healthChecks.date": { $lte: date }}, {_id: 1, first_name: 1, last_name: 1, birthdate:1, healthChecks: 1, room: 1 } 
   );
-  console.log("healthFilter")
-  console.log(healthFilter[0].healthChecks[0].night)
 
   //this will save the information
   var healthReportList = [];
-  //for each profile -> incidents -> each object to get the information and formated to use into the state
+  //for each profile -> healthChecks -> each object to get the information and formated to use into the state
   for (var i = 0; i < healthFilter.length; i++) {
     var id = healthFilter[i]._id;
       var names;
@@ -52,16 +50,14 @@ exports.getHealthReport = async (req, res) => {
       morning = healthFilter[i].healthChecks[h].morning;
       evening =  healthFilter[i].healthChecks[h].evening;
       if(night === 'Not seen' && morning === 'Not seen' && evening === 'Not seen'){
-        // console.log("dentro del if que evalua not seen")
         seenCount++;
-        // console.log(names + " seencount: " + seenCount);
       }
     }
     healthReportList.push({_id: id, names: names, birthdate: birthdate, seenCount: seenCount, room: room})
-    // console.log("healthReportList")
-    //   console.log(healthReportList)
+    console.log("healthReportList")
+      console.log(healthReportList)
   }
-  const filter = healthReportList.filter(count => count.seenCount == 3)
+  const filter = healthReportList.filter(count => count.seenCount >= 3)
   try {
     res.status(200);
     res.send(filter);
