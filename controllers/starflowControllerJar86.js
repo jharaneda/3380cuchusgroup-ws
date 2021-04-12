@@ -204,7 +204,7 @@ exports.updateProfile = async (req, res) => {
         phone: req.body.phone,
         meds_taken: req.body.meds_taken,
         comments: req.body.comments,
-        physical_description: req.body.physical_description,
+        description: req.body.description,
         birthdate: req.body.birthdate,
       },
     }
@@ -346,7 +346,7 @@ exports.deleteProfile = async (req, res) => {
         phone: "",
         meds_taken: "",
         comments: "",
-        physical_description: "",
+        description: "",
         birthdate: "",
         incidentes: [],
         healthChecks: []

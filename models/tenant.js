@@ -19,7 +19,7 @@ const tenantSchema = mongoose.Schema(
     phone: String,
     meds_taken: String,
     comments: String,
-    phsycal_description: String,
+    description: String,
     birthdate: String,
     incidentes: Array,
     healthChecks: Array
