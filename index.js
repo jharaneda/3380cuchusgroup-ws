@@ -40,7 +40,7 @@ app.use('/health/report', starFlow)
 app.use('/', starFlow)
 
 mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => app.listen(port, () => console.log(`Server Running on Port: http://localhost:${port}`)))
+  .then(() => app.listen(port, () => console.log(`Server Running on Port: http://34.207.211.81${port}`)))
   .catch((error) => console.log(`${error} did not connect`));
 
 
