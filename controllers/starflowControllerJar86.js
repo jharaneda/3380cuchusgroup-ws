@@ -20,9 +20,6 @@ exports.getHealthReport = async (req, res) => {
   var today = new Date(date);
   var dateMinusOne = today.getDate() ;
   var dateMinusTwo = date - 2;
-  console.log(today)
-  console.log(dateMinusOne)
-  console.log(dateMinusTwo)
   //get all the incidents where the date is less than today is not empty
   var healthFilter = await Tenant.find(
     // { _id: id, "healthChecks.date": { $eq: date } },
@@ -54,8 +51,6 @@ exports.getHealthReport = async (req, res) => {
       }
     }
     healthReportList.push({_id: id, names: names, birthdate: birthdate, seenCount: seenCount, room: room})
-    console.log("healthReportList")
-      console.log(healthReportList)
   }
   const filter = healthReportList.filter(count => count.seenCount >= 3)
   try {
@@ -188,7 +183,6 @@ exports.addTodo = function (req, res) {
     priority: req.body.priority,
     comments: req.body.comments,
   };
-  console.log(newTodo);
   todoList.push(newTodo);
   res.header("Content-Type: application/json");
   res.send(JSON.stringify(todoList));
@@ -235,9 +229,6 @@ exports.addHealth = async (req, res) => {
   var date = req.body.date;
   var id = req.body._id;
   var night, morning, evening;
-  console.log("night:" + req.body.night);
-  console.log("morning:" + req.body.morning);
-  console.log("evening:" + req.body.evening);
   if (req.body.night != null) {
     var night = req.body.night;
   } else {
@@ -255,7 +246,6 @@ exports.addHealth = async (req, res) => {
   } else {
     var evening = "";
   }
-  console.log("night:" + night + " morning:" + morning + " evening:" + evening);
 
   //find the tenant and if the tenant already has an incident created
   var check1 = await Tenant.find(
@@ -342,12 +332,36 @@ exports.addHealth = async (req, res) => {
   }
 };
 
+exports.deleteProfile = async (req, res) => {
+  console.log("Received delete request profile");
+  //updateOne where the ID clicked and set each attribute
+  const oneTenant = await Tenant.updateOne(
+    { _id: req.body._id },
+    {
+      $set: {
+        first_name: "",
+        last_name: "",
+        room: req.body.room,
+        floor: "",
+        phone: "",
+        meds_taken: "",
+        comments: "",
+        physical_description: "",
+        birthdate: "",
+        incidentes: [],
+        healthChecks: []
+      },
+    }
+  );
+  const allTenants = await Tenant.find();
+  try {
+    res.status(200);
+    res.send(allTenants);
 
-let todoList = [
-  {
-    expiration_date: "",
-    room_number: "",
-    priority: "",
-    comments: "",
-  },
-];
+    res.status(404);
+    res.send({ message: "No tenants found!" });
+  } catch {
+    res.status(500);
+    // res.send({ message: "Ups! Nothing here" });
+  }
+};

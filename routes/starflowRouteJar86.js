@@ -6,6 +6,7 @@ var starFlowController = require('../controllers/starflowControllerJar86.js')
 
 router.get('/tenants', starFlowController.getTenantListJar86)
 router.post('/tenants', starFlowController.updateProfile)
+router.post('/tenants/delete', starFlowController.deleteProfile)
 
 router.get('/todolist', starFlowController.getTodoList)
 router.post('/todolist', starFlowController.addTodo)

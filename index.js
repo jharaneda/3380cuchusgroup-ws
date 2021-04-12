@@ -6,7 +6,9 @@ const mongoose = require('mongoose').set('debug', true);
 
 const app = express();
 const port = 8000;
-const mongooseUrl = "mongodb://localhost:27017/tenants1"
+// const mongooseUrl = "mongodb://localhost:27017/tenants1"
+const mongooseUrl = "mongodb://34.207.211.81:27017/tenants1"
+// 34.207.211.81
 
 const corsOption = {
   origin: "*",
@@ -18,6 +20,7 @@ app.use(bodyParser.json());
 const starFlow = require('./routes/starflowRouteJar86.js')
 
 app.use('/tenants', starFlow)
+app.use('/tenants/delete', starFlow)
 app.use('/incident', starFlow)
 app.use('/todoList', starFlow)
 app.use('/health', starFlow)
